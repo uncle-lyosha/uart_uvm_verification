@@ -2,7 +2,7 @@
 This repository contains a robust, scalable Universal Verification Methodology (UVM) testbench designed to fully verify a full-duplex UART IP Core. The environment utilizes modern SystemVerilog/UVM constraints, randomized delays, and functional coverage tracking to achieve high verification quality.
 ## Design Under Test (DUT) Specification
 The DUT is a full-duplex UART transceiver supporting standard async communication with the following fixed parameters:
- * Data Width: 8 bits ([7:0])
+ * Data Width: 8 bits
  * Parity: None (no parity bit)
  * Stop Bits: 1 stop bit
  * Default Baud Rate: 115200 (at 50 MHz clock)
