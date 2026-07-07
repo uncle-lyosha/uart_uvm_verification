@@ -31,7 +31,7 @@ All simulation results are structured inside the dedicated sim_uvm/ output direc
  * Simulation Log (sim_uvm/*.log): Captures complete simulation transcript data, UVM reporter tables, uvm_info logs, and fatal/error/warning severity summaries.
  * Functional Coverage Report (sim_uvm/cov/): Generates .ucdb coverage files providing explicit state coverage data metrics.
 ## How to Run (Makefile Targets)
-The project includes an automated Makefile for compilation, execution, and workspace cleanup.
+The project includes an automated Makefile for compilation, execution, and workspace cleanup. The simulation directory will be created automaticly when you run makefile.
 ### 1. Run Simulation in Console Mode (CLI)
 Executes tests in text mode without loading the graphical layout. Best suited for regression checks or fast runs.
 ```
