@@ -2,7 +2,7 @@
 This repository contains a robust, scalable Universal Verification Methodology (UVM) testbench designed to fully verify a full-duplex UART IP Core. The environment utilizes modern SystemVerilog/UVM constraints, randomized delays, and functional coverage tracking to achieve high verification quality.
 ## Design Under Test (DUT) Specification
 The DUT is a full-duplex UART transceiver supporting standard async communication with the following fixed parameters:
- * Data Width: 8 bits ([7:0])
+ * Data Width: 8 bits
  * Parity: None (no parity bit)
  * Stop Bits: 1 stop bit
  * Default Baud Rate: 115200 (at 50 MHz clock)
@@ -20,18 +20,17 @@ The DUT is a full-duplex UART transceiver supporting standard async communicatio
 | rx_done | output | 1 | Status signal: Byte receiving successfully completed |
 ## Verification Architecture (UVM Environment)
 The verification environment consists of a top-level uart_env managing two separate UVM Agents for full-duplex independent TX/RX traffic verification:
- 1. UART TX Agent (Active): Drives stimuli into the transmitter control interface (data_snd, tx_valid), checks protocols, and gathers transaction metrics.
- 2. UART RX Agent (Active): Emulates remote serial communication lines (rx), injects test data frames, and monitors internal outputs.
+ 1. UART TX Agent (Active): It works with the uart transmitter.
+ 2. UART RX Agent (Active): It works with the uart receiver.
 ### Key Verification Features:
  * Randomized Inter-packet Delays: Sequences automatically inject constrained random delays between data transmissions to verify the design's robust handling of idle states.
- * Functional Coverage (100% Target): Tracks comprehensive coverage across all transmitted and received 8-bit values ([0:255]) along with randomized delays cross-coverage.
- * Automatic Waveform Management: Scripts automatically expand signal groups and fit time-domain charts to window limits upon simulation completion.
-## Simulation Outputs & Logging
+ * Functional Coverage (100% Target): Tracks comprehensive coverage across all transmitted and received 8-bit values.
+## Simulation Outputs & Log
 All simulation results are structured inside the dedicated sim_uvm/ output directory to prevent workspace clutter:
- * Simulation Log (sim_uvm/*.log): Captures complete simulation transcript data, UVM reporter tables, uvm_info logs, and fatal/error/warning severity summaries.
- * Functional Coverage Report (sim_uvm/cov/): Generates .ucdb coverage files providing explicit state coverage data metrics.
+ * Simulation Log (sim/*.log): Captures complete simulation transcript data, UVM reporter tables, uvm_info logs, and fatal/error/warning severity summaries.
+ * Functional Coverage Report (sim/cov/): Generates .ucdb coverage files providing explicit state coverage data metrics.
 ## How to Run (Makefile Targets)
-The project includes an automated Makefile for compilation, execution, and workspace cleanup.
+The project includes an automated Makefile for compilation, execution, and workspace cleanup. The simulation directory will be created automaticly when you run makefile.
 ### 1. Run Simulation in Console Mode (CLI)
 Executes tests in text mode without loading the graphical layout. Best suited for regression checks or fast runs.
 ```
@@ -46,4 +45,13 @@ make gui
 Cleans out generated execution files, UCDB coverage reports, and work directories without altering the underlying core directory layout structure.
 ```
 make clean
+```
+### 4. Additional option
+By default, the SEED is random. But it can be set manually.
+```
+SEED=
+```
+If you need to run another test, add command.
+```
+TEST=test_name
 ```
