@@ -46,3 +46,12 @@ Cleans out generated execution files, UCDB coverage reports, and work directorie
 ```
 make clean
 ```
+### 4. Additional option
+By default, the SEED is random. But it can be set manually.
+'''
+SEED=
+'''
+If you need to run another test, add command.
+'''
+TEST=test_name
+'''
