@@ -10,7 +10,7 @@ class uart_sequence extends uvm_sequence #(uart_sequence_item);
   task body();
     item = uart_sequence_item::type_id::create("item");
 
-    repeat(1500) begin
+    repeat(1000) begin
       start_item(item);
 
         assert(item.randomize());

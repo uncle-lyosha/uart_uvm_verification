@@ -9,6 +9,7 @@ class uart_driver_tx extends uvm_driver #(uart_sequence_item);
   extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
   
+  extern task driver_tx(uart_sequence_item item);
 endclass
 
 function uart_driver_tx::new(string name = "uart_driver_tx", uvm_component parent);
@@ -23,18 +24,23 @@ task uart_driver_tx::run_phase(uvm_phase phase);
   forever begin
     seq_item_port.get_next_item(item);
 
-      wait(intf.tx_ready == 1'b1)
-      intf.tx_valid <= 1'b1;
-      intf.data_snd <= item.data;
+      driver_tx(item);
 
-      repeat(2) @(posedge intf.clk);
-      intf.tx_valid <= 1'b0;
-
-      wait(intf.tx_ready == 1'b1);
-      repeat(item.delay) #(150ns);
-     
     seq_item_port.item_done();
   end
+endtask
+
+task uart_driver_tx::driver_tx(uart_sequence_item item);
+  wait(intf.tx_ready == 1'b1)
+  intf.tx_valid <= 1'b1;
+  intf.data_snd <= item.data;
+
+  repeat(2) @(posedge intf.clk);
+  intf.tx_valid <= 1'b0;
+
+  wait(intf.tx_ready == 1'b1);
+  repeat(item.delay) #(150ns);
+     
 endtask
 
 
@@ -49,6 +55,7 @@ class uart_driver_rx extends uvm_driver #(uart_sequence_item);
   extern task run_phase(uvm_phase phase);
   extern function void build_phase(uvm_phase phase);
 
+  extern task driver_rx(uart_sequence_item item);
 endclass
 
 function uart_driver_rx::new(string name = "uart_driver_rx", uvm_component parent);
@@ -63,19 +70,23 @@ task uart_driver_rx::run_phase(uvm_phase phase);
   forever begin
     seq_item_port.get_next_item(item);
 
-      intf.rx <= 1'b1;
-      repeat(item.delay) #(150ns);
-      intf.rx <= 1'b0;
-      #(8680ns);
-      for(int i = 0; i < 8; i++) begin
-        intf.rx <= item.data[i];
-        #(8680ns);
-      end
-      intf.rx <= 1'b1;
-      #(8680ns);
+      driver_rx(item);
       
     seq_item_port.item_done();
   end
+endtask
+
+task uart_driver_rx::driver_rx(uart_sequence_item item);
+  intf.rx <= 1'b1;
+  repeat(item.delay) #(150ns);
+  intf.rx <= 1'b0;
+  #(8680ns);
+  for(int i = 0; i < 8; i++) begin
+    intf.rx <= item.data[i];
+    #(8680ns);
+  end
+  intf.rx <= 1'b1;
+  #(8680ns);
 endtask
 
 

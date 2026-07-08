@@ -18,7 +18,8 @@ endfunction
 
 function void uart_test::build_phase(uvm_phase phase);
   // if(!uvm_config_db#(virtual uart_intf)::get(null, "", "intf", intf)) `uvm_fatal("BFM", "Failed to get intf")
-
+  $display("NAGGERS");
+  
   env = uart_env::type_id::create("env", this);
   uart_sequence_tx = uart_sequence::type_id::create("uart_sequence_tx", this);
   uart_sequence_rx = uart_sequence::type_id::create("uart_sequence_rx", this);

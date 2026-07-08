@@ -12,6 +12,8 @@ class uart_monitor_tx extends uvm_monitor;
   extern function new(string name = "uart_monitor_tx", uvm_component parent);
   extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
+
+  extern task monitoring_tx(uart_sequence_item item_i, uart_sequence_item item_o);
 endclass
 
 function uart_monitor_tx::new(string name = "uart_monitor_tx", uvm_component parent);
@@ -31,23 +33,27 @@ task uart_monitor_tx::run_phase(uvm_phase phase);
     item_i = uart_sequence_item::type_id::create("item_i_tx");
     item_o = uart_sequence_item::type_id::create("item_o_tx");
 
-    @(negedge intf.tx);
-    item_i.data <= intf.data_snd;
-    #(4340ns);
-    assert(!intf.tx);
-    #(4340ns);
-
-    for(int i = 0; i < 8; i++) begin
-      #(4340ns);
-      item_o.data[i] <= intf.tx;
-      #(4340ns);
-    end
-    #(4340ns);
-    assert(intf.tx);
+    monitoring_tx(item_i, item_o);
 
     uart_ap_i.write(item_i);
     uart_ap_o.write(item_o);
   end
+endtask
+
+task uart_monitor_tx::monitoring_tx(uart_sequence_item item_i, uart_sequence_item item_o);
+  wait(!intf.tx);
+  item_i.data <= intf.data_snd;
+  #(4340ns);
+  assert(!intf.tx);
+  #(4340ns);
+
+  for(int i = 0; i < 8; i++) begin
+    #(4340ns);
+    item_o.data[i] <= intf.tx;
+    #(4340ns);
+  end
+  #(4340ns);
+  assert(intf.tx);
 endtask
 
 
@@ -65,6 +71,8 @@ class uart_monitor_rx extends uvm_monitor;
   extern function new(string name = "uart_monitor_rx", uvm_component parent);
   extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
+
+  extern task monitoring_rx(uart_sequence_item item_i, uart_sequence_item item_o);
 endclass
 
 function uart_monitor_rx::new(string name = "uart_monitor_rx", uvm_component parent);
@@ -82,23 +90,27 @@ task uart_monitor_rx::run_phase(uvm_phase phase);
     item_i = uart_sequence_item::type_id::create("item_i_rx");
     item_o = uart_sequence_item::type_id::create("item_o_rx");
 
-    @(negedge intf.rx);
-    #(4340ns);
-    assert(!intf.rx);
-    #(4340ns);
-    
-    for(int i = 0; i < 8; i++) begin
-      #(4340ns);
-      item_i.data[i] = intf.rx;
-      #(4340ns);
-    end
-    #(4340ns);
-    assert(intf.rx);
-
-    @(posedge intf.rx_done);
-    item_o.data = intf.data_rcv;
+    monitoring_rx(item_i, item_o);
     
     uart_ap_i.write(item_i);
     uart_ap_o.write(item_o);
   end
+endtask
+
+task uart_monitor_rx::monitoring_rx(uart_sequence_item item_i, uart_sequence_item item_o);
+  wait(!intf.rx);
+  #(4340ns);
+  assert(!intf.rx);
+  #(4340ns);
+  
+  for(int i = 0; i < 8; i++) begin
+    #(4340ns);
+    item_i.data[i] = intf.rx;
+    #(4340ns);
+  end
+  #(4340ns);
+  assert(intf.rx);
+
+  wait(intf.rx_done);
+  item_o.data = intf.data_rcv;
 endtask
